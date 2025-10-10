@@ -5,96 +5,96 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GuavaCare - Deteksi Penyakit Jambu</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" type="image/jpg" href="../static/favicon.jpg">
+    <link href="../static/css/output.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="../static/css/output.css">
-    <style>
-        .page {
-            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
-        }
-
-        .page-hidden {
-            opacity: 0;
-            transform: scale(0.95);
-            pointer-events: none;
-            position: absolute;
-        }
-    </style>
 </head>
 
-<body class="bg-gray-50 font-sans">
+<body class="bg-red-100 flex items-center justify-center min-h-screen p-4">
+    <div class="bg-white rounded-2xl shadow-xl max-w-lg w-full p-8 transition-all duration-500">
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-red-300">GuavaCare</h1>
+            <p class="text-gray-500 mt-2">Analisis Cerdas untuk Daun Jambu Anda</p>
+        </div>
 
-    <div id="app" class="max-w-md mx-auto min-h-screen bg-white shadow-lg">
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6 rounded-r-lg" role="alert">
+            <p class="font-bold">Error</p>
+            <p>{{ messages[0] }}</p>
+        </div>
+        {% endif %}
+        {% endwith %}
 
-        <main id="homePage" class="page p-6 flex flex-col h-screen">
-            <header class="text-center mb-8">
-                <h1 class="text-4xl font-bold text-green-800">GuavaCare</h1>
-                <p class="text-gray-500 mt-2">Identifikasi penyakit pada daun jambu kristal dengan satu klik.</p>
-            </header>
+        {% if not prediction %}
+        <div id="upload-section">
+            <form action="{{ url_for('predict') }}" method="post" enctype="multipart/form-data">
+                <label for="image_file"
+                    class="cursor-pointer flex flex-col items-center justify-center border-2 border-dashed border-gray-300 hover:border-[#8FA31E] rounded-xl p-12 text-center transition-colors duration-300">
+                    <i class="fas fa-leaf text-5xl text-green-400 mb-4"></i>
+                    <p class="text-green-600 font-semibold">Klik untuk memilih gambar</p>
+                    <p class="text-xs text-gray-400 mt-2">Format: JPG, PNG, WEBP, JPEG</p>
+                </label>
+                <input type="file" name="image_file" id="image_file" class="hidden" onchange="this.form.submit()">
+            </form>
+        </div>
+        {% endif %}
 
-            <div class="flex-grow flex items-center justify-center">
-                <div class="text-center">
-                    <img src="https://i.ibb.co/L5hBq2z/plant-illustration.png" alt="Ilustrasi Tanaman"
-                        class="w-64 h-64 mx-auto mb-4 opacity-90">
+        {% if prediction %}
+        <div id="result-section">
+            <div class="mb-6 rounded-xl overflow-hidden shadow-lg">
+                <img src="{{ url_for('static', filename=img_path.replace('static/', '')) }}"
+                    alt="Gambar Daun yang Dianalisis" class="w-1/2 mx-auto rounded-lg shadow-md">
+            </div>
+
+            <div class="text-center">
+                <p class="text-gray-500">Hasil Analisis</p>
+                <h2 class="text-4xl font-bold text-green-600 my-2">{{ prediction }}</h2>
+                <div class="inline-block bg-green-700 text-white font-semibold px-4 py-1 rounded-full text-lg">
+                    Keyakinan: {{ confidence }}
                 </div>
             </div>
 
-            <div class="mt-auto">
-                <form id="uploadForm" action="/predict" method="post" enctype="multipart/form-data">
-                    <label for="fileInput"
-                        class="cursor-pointer w-full bg-green-600 text-white font-bold py-4 px-4 rounded-xl flex items-center justify-center text-lg hover:bg-green-700 transition duration-300 shadow-lg">
-                        <i class="fa-solid fa-camera mr-3 text-2xl"></i>
-                        <span>Ambil atau Unggah Foto</span>
-                    </label>
-                    <input type="file" id="fileInput" name="image_file" class="hidden" accept="image/*">
-                </form>
-                <p class="text-xs text-gray-400 text-center mt-4">Pastikan gambar jelas dan tidak buram untuk hasil yang
-                    akurat.</p>
-            </div>
-        </main>
+            <div class="mt-8 space-y-4 text-left">
+                <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                    <h3 class="font-bold text-green-600 mb-2 flex items-center">
+                        <i class="fas fa-info-circle mr-2"></i>
+                        Tentang Kondisi Ini
+                    </h3>
+                    <p class="text-sm text-gray-700 leading-relaxed">
+                        {{ disease_description }}
+                    </p>
+                </div>
+                <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                    <h3 class="font-bold text-green-600 mb-2 flex items-center">
+                        <i class="fas fa-shield-alt mr-2"></i>
+                        Rekomendasi Penanganan
+                    </h3>
+                    <p class="text-sm text-gray-700 leading-relaxed">
+                        {{ disease_handling }}
+                    </p>
 
-        <section id="resultPage" class="page page-hidden p-6">
-            <div class="mb-6">
-                <button id="backButton" class="text-green-700 hover:text-green-900 transition">
-                    <i class="fa-solid fa-arrow-left mr-2"></i>Kembali
-                </button>
-            </div>
-
-            <div class="mb-6 rounded-2xl overflow-hidden shadow-lg">
-                <img id="uploadedImage" src="https://i.ibb.co/mHq335Z/daun-bercak.jpg" alt="Daun yang diunggah"
-                    class="w-full h-auto object-cover">
-            </div>
-
-            <div>
-                <p class="text-sm text-gray-500">Hasil Identifikasi</p>
-                <h2 id="predictionResult" class="text-4xl font-bold text-gray-800 mt-1">Bercak Daun</h2>
-                <p id="confidenceScore" class="text-lg text-green-600 font-semibold mt-1">Keyakinan 98.72%</p>
+                    {% if youtube_link %}
+                    <a href="{{ youtube_link }}" target="_blank"
+                        class="inline-block bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg mt-4 transition-colors duration-300">
+                        <i class="fab fa-youtube mr-2"></i>
+                        Tonton Solusi di YouTube
+                    </a>
+                    {% endif %}
+                </div>
             </div>
 
-            <div class="mt-8 bg-green-50 p-4 rounded-xl">
-                <h3 class="font-bold text-green-800 mb-2"><i class="fa-solid fa-circle-info mr-2"></i>Tentang Penyakit
-                </h3>
-                <p id="diseaseInfo" class="text-sm text-gray-700 leading-relaxed">
-                    Bercak daun pada jambu kristal disebabkan oleh jamur *Pestalotiopsis psidii*. Gejalanya berupa
-                    bercak coklat kecil pada daun yang dapat membesar seiring waktu. Penyakit ini dapat menurunkan
-                    kemampuan fotosintesis dan kualitas buah.
-                </p>
+            <div class="mt-8 text-center">
+                <a href="{{ url_for('main') }}"
+                    class="bg-green-600 hover:bg-opacity-90 text-white font-bold py-3 px-6 rounded-lg transition-colors duration-300">
+                    <i class="fas fa-redo-alt mr-2"></i>
+                    Analisis Gambar Lain
+                </a>
             </div>
-
-            <div class="mt-4 bg-blue-50 p-4 rounded-xl">
-                <h3 class="font-bold text-blue-800 mb-2"><i class="fa-solid fa-shield-virus mr-2"></i>Saran Penanganan
-                </h3>
-                <p id="handlingSuggestion" class="text-sm text-gray-700 leading-relaxed">
-                    Pangkas dan buang daun yang terinfeksi. Berikan fungisida yang mengandung bahan aktif mankozeb atau
-                    propineb sesuai dosis yang dianjurkan. Jaga kebersihan kebun dan sirkulasi udara di sekitar tanaman.
-                </p>
-            </div>
-        </section>
-
+        </div>
+        {% endif %}
     </div>
 
-    <script src="../static/js/script.js">
-    </script>
 </body>
 
 </html>

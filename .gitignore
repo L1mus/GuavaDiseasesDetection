@@ -10,7 +10,6 @@ __pycache__/
 .vscode/
 
 # Folder untuk gambar yang diunggah pengguna
-# Kita tidak ingin menyimpan gambar hasil tes pengguna di repositori
 static/uploads/
 
 # File sistem operasi
