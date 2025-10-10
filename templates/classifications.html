@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GuavaCare - Deteksi Penyakit Jambu</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../static/css/output.css">
+    <style>
+        .page {
+            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+        }
+
+        .page-hidden {
+            opacity: 0;
+            transform: scale(0.95);
+            pointer-events: none;
+            position: absolute;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 font-sans">
+
+    <div id="app" class="max-w-md mx-auto min-h-screen bg-white shadow-lg">
+
+        <main id="homePage" class="page p-6 flex flex-col h-screen">
+            <header class="text-center mb-8">
+                <h1 class="text-4xl font-bold text-green-800">GuavaCare</h1>
+                <p class="text-gray-500 mt-2">Identifikasi penyakit pada daun jambu kristal dengan satu klik.</p>
+            </header>
+
+            <div class="flex-grow flex items-center justify-center">
+                <div class="text-center">
+                    <img src="https://i.ibb.co/L5hBq2z/plant-illustration.png" alt="Ilustrasi Tanaman"
+                        class="w-64 h-64 mx-auto mb-4 opacity-90">
+                </div>
+            </div>
+
+            <div class="mt-auto">
+                <form id="uploadForm" action="/predict" method="post" enctype="multipart/form-data">
+                    <label for="fileInput"
+                        class="cursor-pointer w-full bg-green-600 text-white font-bold py-4 px-4 rounded-xl flex items-center justify-center text-lg hover:bg-green-700 transition duration-300 shadow-lg">
+                        <i class="fa-solid fa-camera mr-3 text-2xl"></i>
+                        <span>Ambil atau Unggah Foto</span>
+                    </label>
+                    <input type="file" id="fileInput" name="image_file" class="hidden" accept="image/*">
+                </form>
+                <p class="text-xs text-gray-400 text-center mt-4">Pastikan gambar jelas dan tidak buram untuk hasil yang
+                    akurat.</p>
+            </div>
+        </main>
+
+        <section id="resultPage" class="page page-hidden p-6">
+            <div class="mb-6">
+                <button id="backButton" class="text-green-700 hover:text-green-900 transition">
+                    <i class="fa-solid fa-arrow-left mr-2"></i>Kembali
+                </button>
+            </div>
+
+            <div class="mb-6 rounded-2xl overflow-hidden shadow-lg">
+                <img id="uploadedImage" src="https://i.ibb.co/mHq335Z/daun-bercak.jpg" alt="Daun yang diunggah"
+                    class="w-full h-auto object-cover">
+            </div>
+
+            <div>
+                <p class="text-sm text-gray-500">Hasil Identifikasi</p>
+                <h2 id="predictionResult" class="text-4xl font-bold text-gray-800 mt-1">Bercak Daun</h2>
+                <p id="confidenceScore" class="text-lg text-green-600 font-semibold mt-1">Keyakinan 98.72%</p>
+            </div>
+
+            <div class="mt-8 bg-green-50 p-4 rounded-xl">
+                <h3 class="font-bold text-green-800 mb-2"><i class="fa-solid fa-circle-info mr-2"></i>Tentang Penyakit
+                </h3>
+                <p id="diseaseInfo" class="text-sm text-gray-700 leading-relaxed">
+                    Bercak daun pada jambu kristal disebabkan oleh jamur *Pestalotiopsis psidii*. Gejalanya berupa
+                    bercak coklat kecil pada daun yang dapat membesar seiring waktu. Penyakit ini dapat menurunkan
+                    kemampuan fotosintesis dan kualitas buah.
+                </p>
+            </div>
+
+            <div class="mt-4 bg-blue-50 p-4 rounded-xl">
+                <h3 class="font-bold text-blue-800 mb-2"><i class="fa-solid fa-shield-virus mr-2"></i>Saran Penanganan
+                </h3>
+                <p id="handlingSuggestion" class="text-sm text-gray-700 leading-relaxed">
+                    Pangkas dan buang daun yang terinfeksi. Berikan fungisida yang mengandung bahan aktif mankozeb atau
+                    propineb sesuai dosis yang dianjurkan. Jaga kebersihan kebun dan sirkulasi udara di sekitar tanaman.
+                </p>
+            </div>
+        </section>
+
+    </div>
+
+    <script src="../static/js/script.js">
+    </script>
+</body>
+
+</html>

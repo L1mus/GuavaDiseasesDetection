@@ -1,0 +1,18 @@
+# Virtual Environments
+venv/
+venv38/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# VS Code settings
+.vscode/
+
+# Folder untuk gambar yang diunggah pengguna
+# Kita tidak ingin menyimpan gambar hasil tes pengguna di repositori
+static/uploads/
+
+# File sistem operasi
+.DS_Store
+Thumbs.db
